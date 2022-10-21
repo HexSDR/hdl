@@ -172,7 +172,8 @@ module ad_data_out #(
   endgenerate
 
   generate
-  if ((IODELAY_FPGA_TECHNOLOGY == ULTRASCALE_PLUS) || (IODELAY_FPGA_TECHNOLOGY == ULTRASCALE)) begin
+  if (((IODELAY_FPGA_TECHNOLOGY == ULTRASCALE_PLUS) || (IODELAY_FPGA_TECHNOLOGY == ULTRASCALE)) &&
+    IODELAY_CTRL_ENABLED == 1'b0) begin
 
     (* IODELAY_GROUP = IODELAY_GROUP *)
     ODELAYE3 #(
@@ -182,7 +183,7 @@ module ad_data_out #(
       .DELAY_VALUE (0),                     // Output delay tap setting
       .IS_CLK_INVERTED (1'b0),              // Optional inversion for CLK
       .IS_RST_INVERTED (1'b0),              // Optional inversion for RST
-      .REFCLK_FREQUENCY (REFCLK_FREQUENCY), // IDELAYCTRL clock input frequency in MHz (200.0-800.0)
+      .REFCLK_FREQUENCY (300),              // IDELAYCTRL clock input frequency in MHz (200.0-800.0), 300MHz default
       .SIM_DEVICE (IODELAY_SIM_DEVICE),     // Set the device version for simulation functionality (ULTRASCALE)
       .UPDATE_MODE ("ASYNC")                // Determines when updates to the delay will take effect (ASYNC, MANUAL, SYNC)
     ) i_tx_data_odelay (
@@ -198,7 +199,7 @@ module ad_data_out #(
       .ODATAIN (tx_data_oddr_s),   // 1-bit input: Data input
       .DATAOUT (tx_data_odelay_s), // 1-bit output: Delayed data from ODATAIN input port
       .RST (1'b0),                 // 1-bit input: Asynchronous Reset to the DELAY_VALUE
-      .EN_VTC (~up_dld));          // 1-bit input: Keep delay constant over VT
+      .EN_VTC (1'b0));//~up_dld));          // 1-bit input: Keep delay constant over VT
   end
   endgenerate
 

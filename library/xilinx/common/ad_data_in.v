@@ -152,8 +152,11 @@ module ad_data_in #(
   endgenerate
 
   generate
-  if ((IODELAY_FPGA_TECHNOLOGY == ULTRASCALE) || (IODELAY_FPGA_TECHNOLOGY == ULTRASCALE_PLUS)) begin
+  if (((IODELAY_FPGA_TECHNOLOGY == ULTRASCALE) || (IODELAY_FPGA_TECHNOLOGY == ULTRASCALE_PLUS)) &&
+    IODELAY_CTRL_ENABLED == 1'b0) begin
+
     assign up_drdata = up_drdata_s[8:4];
+
     (* IODELAY_GROUP = IODELAY_GROUP *)
     IDELAYE3 #(
       .CASCADE ("NONE"),                    // Cascade setting  (MASTER, NONE, SLAVE_END, SLAVE_MIDDLE)
@@ -163,7 +166,7 @@ module ad_data_in #(
       .DELAY_VALUE (0),                     // Input delay value setting
       .IS_CLK_INVERTED (1'b0),              // Optional inversion for CLK
       .IS_RST_INVERTED (1'b0),              // Optional inversion for RST
-      .REFCLK_FREQUENCY (REFCLK_FREQUENCY), // IDELAYCTRL clock input frequency in MHz  (200.0-800.0)
+      .REFCLK_FREQUENCY (300),              // IDELAYCTRL clock input frequency in MHz  (200.0-800.0), 300MHz default
       .SIM_DEVICE (IODELAY_SIM_DEVICE),     // Set the device version for simulation functionality
       .UPDATE_MODE ("ASYNC")                // Determines when updates to the delay will take effect  (ASYNC, MANUAL, SYNC)
     ) i_rx_data_idelay (
